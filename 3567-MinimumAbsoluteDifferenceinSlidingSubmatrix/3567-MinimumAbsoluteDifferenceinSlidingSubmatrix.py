@@ -1,20 +1,35 @@
-# Last updated: 20/03/2026, 13:19:54
-1# Added using AI
-2class Solution:
-3    def minAbsDiff(self, grid: list[list[int]], k: int) -> list[list[int]]:
-4        m, n = len(grid), len(grid[0])
-5        ans = [[0] * (n - k + 1) for _ in range(m - k + 1)]
-6
-7        for i in range(m - k + 1):
-8            for j in range(n - k + 1):
-9                v = sorted(set(
-10                    grid[x][y]
-11                    for x in range(i, i + k)
-12                    for y in range(j, j + k)
-13                ))
-14                if len(v) <= 1:
-15                    ans[i][j] = 0
-16                else:
-17                    ans[i][j] = min(v[p+1] - v[p] for p in range(len(v) - 1))
-18
-19        return ans
+# Last updated: 20/03/2026, 13:20:11
+class Solution:
+    def minAbsDiff(self, grid: List[List[int]], k: int) -> List[List[int]]:
+        rows = len(grid)
+        cols = len(grid[0])
+        res = [[0] * (cols - k + 1) for _ in range(rows - k + 1)]
+        def diff(window):
+            if len(window) < 2:
+                return 0
+            min_diff = float('inf')
+            for i in range(len(window) - 1):
+                diff = window[i+1] - window[i]
+                if diff > 0 and diff < min_diff:
+                    min_diff = diff
+            return min_diff if min_diff != float('inf') else 0
+        for r in range(rows - k + 1):
+            cur = []
+            for i in range(k):
+                for j in range(k):
+                    insort(cur, grid[r+i][j])
+            res[r][0] = diff(cur)
+            for c in range(1, cols - k + 1):
+                for i in range(k):
+                    remove = grid[r+i][c-1]
+                    index = bisect_left(cur, remove)
+                    cur.pop(index)
+                for i in range(k):
+                    add = grid[r+i][c+k-1]
+                    insort(cur, add)
+                res[r][c] = diff(cur)
+        return res
+
+
+
+        
