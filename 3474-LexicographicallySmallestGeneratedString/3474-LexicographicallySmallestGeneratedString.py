@@ -1,35 +1,37 @@
-# Last updated: 31/03/2026, 19:16:36
-1class Solution:
-2    def generateString(self, s: str, t: str) -> str:
-3        n, m = len(s), len(t)
-4        ans = ['?'] * (n + m - 1)  # ? indicates a pending position
-5        
-6        # Process 'T'
-7        for i, b in enumerate(s):
-8            if b != 'T':
-9                continue
-10            # The substring must match t
-11            for j, c in enumerate(t):
-12                v = ans[i + j]
-13                if v != '?' and v != c:
-14                    return ""
-15                ans[i + j] = c
-16        
-17        old_ans = ans
-18        ans = ['a' if c == '?' else c for c in ans]  # Initial default is 'a'
-19        
-20        # Process 'F'
-21        for i, b in enumerate(s):
-22            if b != 'F':
-23                continue
-24            # Substring must not equal t
-25            if ''.join(ans[i: i + m]) != t:
-26                continue
-27            # Locate the last pending position to modify
-28            for j in range(i + m - 1, i - 1, -1):
-29                if old_ans[j] == '?':  # Change 'a' to 'b'
-30                    ans[j] = 'b'
-31                    break
-32            else:
-33                return ""
-34        return ''.join(ans)
+# Last updated: 31/03/2026, 19:17:17
+class Solution:
+    def generateString(self, str1: str, str2: str) -> str:
+        n, m = len(str1), len(str2)
+        ans = ["a"]*(m+n-1)
+        ind = [-1]*(m+n-1)
+        
+        j = m
+        for i in range(m+n-1): 
+            if i < n and str1[i] == 'T': j = 0 
+            if j < m: 
+                ans[i] = str2[j]
+                ind[i] = j
+            j += 1
+        
+        k = 0
+        lps = [0]
+        for i in range(1, m):
+            while k and str2[k] != str2[i]: k = lps[k-1]
+            if str2[k] == str2[i]: k += 1
+            lps.append(k)
+        
+        k = 0
+        last = -1
+        for i, ch in enumerate(ans): 
+            if ind[i] == -1: last = i 
+            while k and (k == m or str2[k] != ch): k = lps[k-1]
+            if str2[k] == ch: k += 1
+            if i >= m-1: 
+                if str1[i-m+1] == 'T' and k < m: return ""
+                if str1[i-m+1] == 'F' and k == m: 
+                    if last < i-m+1: return ""
+                    ans[last] = 'b'
+                    if ind[i] != -1: k = ind[i]+1
+                    else: k = 0 
+        
+        return "".join(ans)
