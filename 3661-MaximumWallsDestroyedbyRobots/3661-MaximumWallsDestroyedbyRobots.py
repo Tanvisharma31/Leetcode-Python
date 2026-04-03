@@ -1,61 +1,80 @@
-# Last updated: 03/04/2026, 13:07:56
-1class Solution:
-2    def maxWalls(
-3        self, robots: List[int], distance: List[int], walls: List[int]
-4    ) -> int:
-5        n = len(robots)
-6        left = [0] * n
-7        right = [0] * n
-8        num = [0] * n
-9        robots_to_distance = {}
-10
-11        for i in range(n):
-12            robots_to_distance[robots[i]] = distance[i]
-13
-14        robots.sort()
-15        walls.sort()
-16
-17        for i in range(n):
-18            pos1 = bisect.bisect_right(walls, robots[i])
-19
-20            if i >= 1:
-21                left_bound = max(
-22                    robots[i] - robots_to_distance[robots[i]], robots[i - 1] + 1
-23                )
-24                left_pos = bisect.bisect_left(walls, left_bound)
-25            else:
-26                left_pos = bisect.bisect_left(
-27                    walls, robots[i] - robots_to_distance[robots[i]]
-28                )
-29
-30            left[i] = pos1 - left_pos
-31
-32            if i < n - 1:
-33                right_bound = min(
-34                    robots[i] + robots_to_distance[robots[i]], robots[i + 1] - 1
-35                )
-36                right_pos = bisect.bisect_right(walls, right_bound)
-37            else:
-38                right_pos = bisect.bisect_right(
-39                    walls, robots[i] + robots_to_distance[robots[i]]
-40                )
-41
-42            pos2 = bisect.bisect_left(walls, robots[i])
-43            right[i] = right_pos - pos2
-44
-45            if i == 0:
-46                continue
-47
-48            pos3 = bisect.bisect_left(walls, robots[i - 1])
-49            num[i] = pos1 - pos3
-50
-51        sub_left, sub_right = left[0], right[0]
-52        for i in range(1, n):
-53            current_left = max(
-54                sub_left + left[i],
-55                sub_right - right[i - 1] + min(left[i] + right[i - 1], num[i]),
-56            )
-57            current_right = max(sub_left + right[i], sub_right + right[i])
-58            sub_left, sub_right = current_left, current_right
-59
-60        return max(sub_left, sub_right)
+# Last updated: 03/04/2026, 13:08:17
+from typing import List
+
+class Solution:
+    def maxWalls(self, robots: List[int], distance: List[int], walls: List[int]) -> int:
+        n = len(robots)
+        # pair robots with their distances and sort by position
+        rob = sorted(zip(robots, distance))
+        p = [r[0] for r in rob]
+        d = [r[1] for r in rob]
+
+        # count walls that are exactly at a robot position
+        robot_set = set(p)
+        ans0 = 0
+        walls_filtered = []
+        for w in walls:
+            if w in robot_set:
+                ans0 += 1
+            else:
+                walls_filtered.append(w)
+        walls_filtered.sort()
+        m = len(walls_filtered)
+
+        if m == 0:
+            return ans0
+
+        # ----- left region (walls before the first robot) -----
+        left_count = 0
+        j = 0
+        while j < m and walls_filtered[j] < p[0]:
+            if walls_filtered[j] >= p[0] - d[0]:
+                left_count += 1
+            j += 1
+
+        # ----- gaps between consecutive robots -----
+        # for each gap we store: only left robot can cover, only right robot can cover, both can cover
+        left_only = [0] * (n - 1)
+        right_only = [0] * (n - 1)
+        both = [0] * (n - 1)
+
+        for i in range(n - 1):
+            start = p[i]
+            end = p[i + 1]
+            while j < m and walls_filtered[j] < end:
+                if walls_filtered[j] > start:
+                    distL = walls_filtered[j] - start
+                    distR = end - walls_filtered[j]
+                    if distL <= d[i] and distR <= d[i + 1]:
+                        both[i] += 1
+                    elif distL <= d[i]:
+                        left_only[i] += 1
+                    elif distR <= d[i + 1]:
+                        right_only[i] += 1
+                    # else: not coverable by any robot
+                j += 1
+
+        # ----- right region (walls after the last robot) -----
+        right_count = 0
+        while j < m and walls_filtered[j] <= p[-1] + d[-1]:
+            right_count += 1
+            j += 1
+
+        # ----- DP over robots -----
+        # dpL: best total if current robot fires left
+        # dpR: best total if current robot fires right
+        dpL = left_count   # robot 0 fires left
+        dpR = 0            # robot 0 fires right
+
+        for i in range(1, n):
+            idx = i - 1
+            A = left_only[idx] + both[idx]      # covered if left robot fires right
+            B = right_only[idx] + both[idx]     # covered if right robot fires left
+            C = left_only[idx] + right_only[idx] + both[idx]  # covered if both fire appropriately
+
+            new_dpL = max(dpL + B, dpR + C)   # current robot fires left
+            new_dpR = max(dpL, dpR + A)       # current robot fires right
+            dpL, dpR = new_dpL, new_dpR
+
+        result = ans0 + max(dpL, dpR + right_count)
+        return result
