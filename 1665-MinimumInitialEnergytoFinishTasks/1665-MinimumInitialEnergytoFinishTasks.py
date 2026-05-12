@@ -1,4 +1,4 @@
-# Last updated: 5/12/2026, 12:36:53 PM
+# Last updated: 5/12/2026, 12:37:12 PM
 class Solution:
     def minimumEffort(self, tasks):
         tasks.sort(key=lambda x: x[1] - x[0], reverse=True)
