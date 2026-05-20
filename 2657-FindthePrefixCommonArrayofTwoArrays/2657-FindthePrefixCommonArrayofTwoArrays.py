@@ -1,4 +1,4 @@
-# Last updated: 5/20/2026, 12:54:52 PM
+# Last updated: 5/20/2026, 12:55:11 PM
 class Solution:
     def findThePrefixCommonArray(self, A: List[int], B: List[int]) -> List[int]:
         seen = set()
