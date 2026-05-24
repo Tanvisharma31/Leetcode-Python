@@ -1,8 +1,9 @@
-# Last updated: 02/03/2026, 14:03:24
-class Solution(object):
-    def twoSum(self, nums, target):
-        hash_map={}
-        for i,num in enumerate(nums):
-            if target-num in hash_map:
-                return hash_map[target-num],i
-            hash_map[num]=i
+# Last updated: 5/24/2026, 7:42:04 PM
+1class Solution:
+2    def twoSum(self, nums: List[int], target: int) -> List[int]:
+3        hashset={}
+4        for i, num in enumerate(nums):
+5            if target-num in hashset:
+6                return hashset[target-num],i
+7            hashset[num]=i
+8
