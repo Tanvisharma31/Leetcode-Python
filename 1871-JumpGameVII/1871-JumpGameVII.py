@@ -1,18 +1,26 @@
-# Last updated: 5/25/2026, 1:26:30 PM
-1class Solution:
-2    def canReach(self, s: str, minJump: int, maxJump: int) -> bool:
-3        n=len(s)
-4        if int(s[-1]): return False
-5        dp=[False]*n
-6        dp[0]=True
-7        reach,maxR=0,maxJump
-8        for i in range(minJump,n):
-9            if i>maxR:
-10                return False
-11            reach+=dp[i-minJump]
-12            if i>maxJump:
-13                reach-=dp[i-maxJump-1]
-14            if reach and not int(s[i]):
-15                dp[i]=True
-16                maxR=i+maxJump
-17        return reach>0
+# Last updated: 5/25/2026, 1:26:45 PM
+class Solution:
+    def canReach(self, s: str, minJump: int, maxJump: int) -> bool:
+        if s[-1] == '1' or '1' * maxJump in s:
+            return False
+        n = len(s)
+        if minJump == maxJump:
+            return (n - 1) % minJump == 0 and '1' not in s[::minJump]
+
+        maxJump_1 = maxJump + 1
+        n_maxJump_1 = n - maxJump_1
+        n_minJump = n - minJump
+        
+        visited = set([0])
+        stack = [0]
+        while stack:
+            i = stack.pop()
+            lower = i + minJump
+            for j, c in enumerate(s[lower:min(n_minJump, i + maxJump_1)], start=lower):
+                if j not in visited and c == '0':
+                    if j >= n_maxJump_1:
+                        return True
+                    stack.append(j)
+                    visited.add(j)
+            
+        return False
