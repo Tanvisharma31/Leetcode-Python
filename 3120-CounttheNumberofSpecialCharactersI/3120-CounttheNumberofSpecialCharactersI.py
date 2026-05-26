@@ -1,4 +1,4 @@
-# Last updated: 5/26/2026, 11:33:14 AM
+# Last updated: 5/26/2026, 11:34:05 AM
 class Solution:
     def numberOfSpecialChars(self, word: str) -> int:
         seen = set()
