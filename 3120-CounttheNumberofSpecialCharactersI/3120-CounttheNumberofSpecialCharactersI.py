@@ -1,16 +1,19 @@
-# Last updated: 5/26/2026, 11:32:33 AM
-1class Solution:
-2    def numberOfSpecialChars(self, word: str) -> int:
-3        lower = 0
-4        upper = 0
-5
-6        for ch in word:
-7            if ch.islower():
-8                lower |= (1 << (ord(ch) - ord('a')))
-9            else:
-10                upper |= (1 << (ord(ch) - ord('A')))
-11
-12        common = lower & upper
-13
-14        # counting number of set bits
-15        return common.bit_count()
+# Last updated: 5/26/2026, 11:32:49 AM
+class Solution:
+    def numberOfSpecialChars(self, word: str) -> int:
+        # a-z:97,122
+        # A-Z:65,90
+        res = [0]*26
+        seen_upper, seen_lower = set(), set()
+        for c in word:
+            if ord(c)>96 and c not in seen_lower:
+                res[97-ord(c)]+= 1
+                seen_lower.add(c)
+            if ord(c)<91 and c not in seen_upper:
+                res[65-ord(c)]+= 1
+                seen_upper.add(c)
+        ans = 0
+        for num in res:
+            if num==2:
+                ans+=1
+        return ans
