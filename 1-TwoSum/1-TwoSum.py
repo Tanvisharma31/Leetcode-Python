@@ -1,15 +1,12 @@
-# Last updated: 5/27/2026, 6:27:22 PM
-class Solution:
-    def twoSum(self, numbers: List[int], target: int) -> List[int]:
-        ptr1 = 0
-        ptr2 = len(numbers)-1
-        while True:
-            total = numbers[ptr1]+numbers[ptr2]
-            if total>target:
-                ptr2-=1
-            elif total==target:
-                return [ptr1+1, ptr2+1]
-            else:
-                ptr1+=1
-
-        return -1
+# Last updated: 5/27/2026, 7:12:15 PM
+1class Solution:
+2    def maxArea(self, height: List[int]) -> int:
+3        l, r=0, len(height)-1
+4        res=0
+5        while l<r:
+6            res=max(res,(r-l)* min(height[l],height[r]))
+7            if height[l]<height[r]:
+8                l+=1
+9            else:
+10                r-=1
+11        return res
