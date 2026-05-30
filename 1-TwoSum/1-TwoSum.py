@@ -1,20 +1,12 @@
-# Last updated: 5/27/2026, 7:12:36 PM
-class Solution:
-    def maxArea(self, height: List[int]) -> int:
-        length=len(height)
-        left=0
-        right=length-1
-        area=(right-left)*min(height[left],height[right])
-        maxheight=max(height)
-        while left<right:
-            if height[left]<height[right]:
-                left+=1
-            else:
-                right-=1
-            area=max((right-left)*min(height[left],height[right]),area)
-            if area>=maxheight*(right-left):
-                return area
-        return area
-
-            
-            
+# Last updated: 5/30/2026, 9:01:28 AM
+1class Solution:
+2    def longestCommonPrefix(self, v: List[str]) -> str:
+3        ans=""
+4        v=sorted(v)
+5        first=v[0]
+6        last=v[-1]
+7        for i in range(min(len(first),len(last))):
+8            if(first[i]!=last[i]):
+9                return ans
+10            ans+=first[i]
+11        return ans 
