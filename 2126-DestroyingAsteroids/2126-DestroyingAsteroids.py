@@ -1,9 +1,20 @@
-# Last updated: 5/31/2026, 9:23:09 AM
-1class Solution:
-2    def asteroidsDestroyed(self, mass: int, asteroids: List[int]) -> bool:
-3        asteroids.sort()
-4        for a in asteroids:
-5            if mass<a:
-6                return False
-7            mass+=a
-8        return True
+# Last updated: 5/31/2026, 9:23:31 AM
+class Solution:
+    def asteroidsDestroyed(self, mass: int, asteroids: List[int]) -> bool:
+        mx = max(asteroids)
+
+        while asteroids:
+            uneaten = []
+            for aster in asteroids:
+                if mass < aster:
+                    uneaten.append(aster)
+                else:
+                    mass += aster
+                    if mass >= mx:
+                        return True
+            if len(uneaten) == len(asteroids):
+                return False
+            
+            asteroids = uneaten
+        
+        return True
