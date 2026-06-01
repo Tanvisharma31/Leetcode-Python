@@ -1,4 +1,4 @@
-# Last updated: 6/1/2026, 8:07:41 AM
+# Last updated: 6/1/2026, 8:07:59 AM
 1class Solution:
 2    def findKthBit(self, n: int, k: int) -> str:
 3        if n == 1:
