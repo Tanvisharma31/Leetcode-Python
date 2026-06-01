@@ -1,4 +1,4 @@
-# Last updated: 6/1/2026, 8:10:26 AM
+# Last updated: 6/1/2026, 8:10:39 AM
 class Solution:
     def longestCommonPrefix(self, arr1: List[int], arr2: List[int]) -> int:
         storage=set()
