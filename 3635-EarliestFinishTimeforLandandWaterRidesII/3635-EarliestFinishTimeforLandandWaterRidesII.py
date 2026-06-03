@@ -1,20 +1,21 @@
-# Last updated: 6/3/2026, 1:35:12 PM
-1class Solution:
-2    def earliestFinishTime(
-3        self, la: list[int], lb: list[int], wa: list[int], wb: list[int]
-4    ) -> int:
-5        MAX = 300005
-6        l = w = minL = minW = MAX
-7        n, m = len(la), len(wa)
-8
-9        for i in range(n):
-10            l = min(l, la[i] + lb[i])
-11
-12        for i in range(m):
-13            w = min(w, wa[i] + wb[i])
-14            minL = min(minL, max(wa[i], l) + wb[i])
-15
-16        for i in range(n):
-17            minW = min(minW, max(la[i], w) + lb[i])
-18
-19        return min(minW, minL)
+# Last updated: 6/3/2026, 1:35:28 PM
+from math import inf
+def earliestFinishTime(firstStartTime: List[int], firstDuration: List[int], secondStartTime: List[int], secondDuration: List[int]) -> int:
+    earliest_first_end = inf
+    for i, start in enumerate(firstStartTime):
+        end = start + firstDuration[i]
+        if earliest_first_end > end:
+            earliest_first_end = end
+    #print(earliest_first_end)
+    earliest_end = inf
+    for i, start in enumerate(secondStartTime):
+        end = (start if start >= earliest_first_end else earliest_first_end) + secondDuration[i]
+        if earliest_end > end:
+            earliest_end = end
+    #print(earliest_end)
+    return earliest_end
+
+class Solution:
+    def earliestFinishTime(self, landStartTime: List[int], landDuration: List[int], waterStartTime: List[int], waterDuration: List[int]) -> int:
+        return min(earliestFinishTime(landStartTime, landDuration, waterStartTime, waterDuration),
+                    earliestFinishTime(waterStartTime, waterDuration, landStartTime, landDuration))
